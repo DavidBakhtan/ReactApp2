@@ -1,0 +1,92 @@
+# ToyBox Market - Local Setup Instructions
+
+## Prerequisites
+Make sure you have Node.js and npm installed on your machine.
+
+## Setup Steps
+
+### 1. Install JSON Server (if not already installed)
+```bash
+npm install -g json-server
+```
+
+### 2. Clone and Setup Project
+```bash
+# Clone your project (replace with your actual repository URL)
+git clone <your-repository-url>
+cd <your-project-name>
+
+# Install project dependencies
+npm install
+```
+
+### 3. Place db.json File
+✅ **IMPORTANT**: Make sure the `db.json` file is placed in the ROOT directory of your project (same level as package.json)
+
+### 4. Start JSON Server
+```bash
+json-server --watch db.json --port 4000
+```
+
+**Note**: Keep this terminal window open and the server running while testing!
+
+### 5. Start React Development Server (in a new terminal)
+```bash
+# Open a new terminal window/tab
+npm run dev
+```
+
+## Postman Testing Endpoints
+
+With JSON Server running on port 4000, you can test these endpoints in Postman:
+
+### GET Requests:
+- `GET http://localhost:4000/toys` - Get all toys
+- `GET http://localhost:4000/toys/1` - Get toy by ID
+- `GET http://localhost:4000/toys?category=Action Figures` - Filter by category
+- `GET http://localhost:4000/toys?_page=1&_limit=10` - Pagination
+
+### POST Request (Create new toy):
+- `POST http://localhost:4000/toys`
+- Body (JSON):
+```json
+{
+  "name": "New Toy",
+  "price": 25.99,
+  "category": "Action Figures",
+  "image": "https://example.com/image.jpg",
+  "description": "Amazing new toy",
+  "inStock": true,
+  "rating": 4.5
+}
+```
+
+### PUT Request (Update toy):
+- `PUT http://localhost:4000/toys/1`
+- Body (JSON): [Full toy object with updated fields]
+
+### PATCH Request (Partial update):
+- `PATCH http://localhost:4000/toys/1`
+- Body (JSON):
+```json
+{
+  "price": 29.99,
+  "inStock": false
+}
+```
+
+### DELETE Request:
+- `DELETE http://localhost:4000/toys/1`
+
+## Important Notes:
+- ✅ Keep JSON Server running on port 4000 while testing
+- ✅ Your React app will run on a different port (usually 5173)
+- ✅ The db.json file will be automatically updated when you make changes via API
+- ✅ All 60 toy products are pre-loaded in the database
+
+## Troubleshooting:
+- If port 4000 is busy, use: `json-server --watch db.json --port 4001`
+- Update your React app's API calls to match the port if changed
+- Make sure db.json is in the root directory, not in src/ folder
+
+Happy testing! 🧸🚀
