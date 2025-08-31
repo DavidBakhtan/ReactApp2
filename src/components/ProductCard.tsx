@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Toy } from "@/services/toyApi";
+import { useNavigate } from "react-router-dom";
 
 interface ProductCardProps {
   toy: Toy;
@@ -14,11 +15,17 @@ interface ProductCardProps {
  * Features: Product image, name, price, discount badge, rating, add to cart
  */
 const ProductCard = ({ toy, onAddToCart }: ProductCardProps) => {
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/product/${toy.id}`);
+  };
+
   return (
-    <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-card border-2 hover:border-primary/20">
+    <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-card border-2 hover:border-primary/20 cursor-pointer">
       <CardContent className="p-0">
         {/* Product Image with Discount Badge */}
-        <div className="relative overflow-hidden rounded-t-lg">
+        <div className="relative overflow-hidden rounded-t-lg" onClick={handleCardClick}>
           <img
             src={toy.image}
             alt={toy.name}
@@ -48,14 +55,16 @@ const ProductCard = ({ toy, onAddToCart }: ProductCardProps) => {
         {/* Product Details */}
         <div className="p-4 space-y-3">
           {/* Category */}
-          <Badge variant="secondary" className="text-xs">
-            {toy.category}
-          </Badge>
+         <div onClick={handleCardClick}>
+            <Badge variant="secondary" className="text-xs">
+              {toy.category}
+            </Badge>
 
-          {/* Product Name */}
-          <h3 className="font-semibold text-lg line-clamp-2 text-card-foreground">
-            {toy.name}
-          </h3>
+            {/* Product Name */}
+            <h3 className="font-semibold text-lg line-clamp-2 text-card-foreground">
+              {toy.name}
+            </h3>
+          </div>
 
           {/* Rating */}
           <div className="flex items-center gap-1">
@@ -78,7 +87,10 @@ const ProductCard = ({ toy, onAddToCart }: ProductCardProps) => {
 
           {/* Add to Cart Button */}
           <Button
-            onClick={() => onAddToCart(toy)}
+           onClick={(e) => {
+              e.stopPropagation();
+              onAddToCart(toy);
+            }}
             disabled={!toy.inStock}
             className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white font-semibold"
           >

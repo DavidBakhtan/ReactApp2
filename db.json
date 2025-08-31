@@ -1,16 +1,6 @@
 {
   "toys": [
     {
-      "id": "2",
-      "name": "Princess Doll Set",
-      "price": 24.99,
-      "category": "Dolls",
-      "image": "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=400&fit=crop&crop=center",
-      "description": "Beautiful princess doll with accessories",
-      "inStock": true,
-      "rating": 4.7
-    },
-    {
       "id": "3",
       "name": "Learning Alphabet Blocks",
       "price": 19.99,
@@ -21,28 +11,6 @@
       "description": "Colorful alphabet blocks for early learning",
       "inStock": true,
       "rating": 4.9
-    },
-    {
-      "id": "4",
-      "name": "LEGO Castle Building Set",
-      "price": 89.99,
-      "category": "Building Blocks",
-      "image": "https://images.unsplash.com/photo-1572297398300-a37ed68e0bb6?w=400&h=400&fit=crop&crop=center",
-      "description": "Medieval castle building set with 500+ pieces",
-      "inStock": true,
-      "rating": 4.9
-    },
-    {
-      "id": "5",
-      "name": "Remote Control Race Car",
-      "price": 45.99,
-      "originalPrice": 59.99,
-      "discount": 23,
-      "category": "Vehicles",
-      "image": "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=400&h=400&fit=crop&crop=center",
-      "description": "High-speed RC car with LED lights",
-      "inStock": true,
-      "rating": 4.6
     },
     {
       "id": "6",
@@ -623,7 +591,7 @@
       "rating": 3.6
     },
     {
-      "id": 1,
+      "id": "1",
       "name": "Super Hero Action Figure",
       "price": 29.99,
       "originalPrice": 39.99,
