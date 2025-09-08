@@ -24,7 +24,7 @@ const ProductDetails = () => {
   useEffect(() => {
     const fetchToy = async () => {
       if (!id) return;
-      
+
       try {
         const toyData = await ToyApiService.getToyById(parseInt(id));
         setToy(toyData);
@@ -43,7 +43,7 @@ const ProductDetails = () => {
   }, [id, toast]);
 
   const handleAddToCart = (toy: Toy) => {
-   setCartItems(prev => {
+    setCartItems(prev => {
       const existingItem = prev.find(item => item.id === toy.id);
       if (existingItem) {
         return prev.map(item =>
@@ -105,47 +105,49 @@ const ProductDetails = () => {
 
   return (
     <div className="min-h-screen bg-background">
-   {/* Header */}
+      {/* Header */}
       <Header
         searchTerm=""
-        onSearchChange={() => {}}
+        onSearchChange={() => { }}
         cartCount={cartCount}
-        onAdminClick={() => {}}
+        onAdminClick={() => { }}
         cartItems={cartItems}
         onUpdateCartQuantity={handleUpdateCartQuantity}
         onRemoveFromCart={handleRemoveFromCart}
       />
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-2 sm:px-4 py-4">
         {/* Back Button */}
         <Button
           onClick={() => navigate('/')}
           variant="ghost"
-          className="mb-6"
+          className="mb-4 sm:mb-6"
+          size="sm"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Products
+          <span className="hidden sm:inline">Back to Products</span>
+          <span className="sm:hidden">Back</span>
         </Button>
         {/* Product Details Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
           {/* Product Image */}
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             <Card className="overflow-hidden">
               <CardContent className="p-0">
                 <div className="relative">
                   <img
                     src={toy.image}
                     alt={toy.name}
-                    className="w-full h-96 lg:h-[500px] object-cover"
+                    className="w-full h-64 sm:h-80 lg:h-[500px] object-cover"
                     onError={(e) => {
                       e.currentTarget.src = `https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?w=800&h=800&fit=crop&crop=center`;
                     }}
                   />
-                  
+
                   {/* Discount Badge */}
                   {toy.discount && (
-                    <Badge className="absolute top-4 left-4 bg-destructive text-destructive-foreground font-bold text-base px-3 py-1">
+                    <Badge className="absolute top-2 sm:top-4 left-2 sm:left-4 bg-destructive text-destructive-foreground font-bold text-xs sm:text-base px-2 sm:px-3 py-1">
                       -{toy.discount}%
                     </Badge>
                   )}
@@ -153,7 +155,7 @@ const ProductDetails = () => {
                   {/* Out of Stock Overlay */}
                   {!toy.inStock && (
                     <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                      <Badge variant="destructive" className="text-lg font-bold px-4 py-2">
+                      <Badge variant="destructive" className="text-sm sm:text-lg font-bold px-3 sm:px-4 py-2">
                         Out of Stock
                       </Badge>
                     </div>
@@ -164,40 +166,40 @@ const ProductDetails = () => {
           </div>
 
           {/* Product Information */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {/* Category */}
-            <Badge variant="secondary" className="text-sm">
+            <Badge variant="secondary" className="text-xs sm:text-sm">
               {toy.category}
             </Badge>
 
             {/* Product Name */}
-            <h1 className="text-3xl lg:text-4xl font-bold text-foreground">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground leading-tight">
               {toy.name}
             </h1>
 
             {/* Rating */}
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1">
-                <Star className="w-5 h-5 fill-accent text-accent" />
-                <span className="text-lg font-semibold">{toy.rating}</span>
+                <Star className="w-4 h-4 sm:w-5 sm:h-5 fill-accent text-accent" />
+                <span className="text-base sm:text-lg font-semibold">{toy.rating}</span>
               </div>
-              <span className="text-muted-foreground">(50+ reviews)</span>
+              <span className="text-sm sm:text-base text-muted-foreground">(50+ reviews)</span>
             </div>
 
             {/* Price */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-3">
-                <span className="text-4xl font-bold text-primary">
+            <div className="space-y-1 sm:space-y-2">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <span className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary">
                   ${toy.price.toFixed(2)}
                 </span>
                 {toy.originalPrice && (
-                  <span className="text-xl text-muted-foreground line-through">
+                  <span className="text-lg sm:text-xl text-muted-foreground line-through">
                     ${toy.originalPrice.toFixed(2)}
                   </span>
                 )}
               </div>
               {toy.discount && (
-                <p className="text-green-600 font-medium">
+                <p className="text-green-600 font-medium text-sm sm:text-base">
                   You save ${((toy.originalPrice || toy.price) - toy.price).toFixed(2)} ({toy.discount}% off)
                 </p>
               )}
@@ -205,19 +207,19 @@ const ProductDetails = () => {
 
             {/* Description */}
             <div className="space-y-2">
-              <h3 className="text-xl font-semibold text-foreground">Description</h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <h3 className="text-lg sm:text-xl font-semibold text-foreground">Description</h3>
+              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
                 {toy.description}
               </p>
             </div>
 
             {/* Add to Cart Button */}
-            <div className="pt-4">
+            <div className="pt-2 sm:pt-4">
               <Button
                 onClick={() => handleAddToCart(toy)}
                 disabled={!toy.inStock}
                 size="lg"
-                className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white font-bold text-lg py-6"
+                className="w-full bg-gradient-to-r from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 text-white font-bold text-base sm:text-lg py-4 sm:py-6 h-12 sm:h-14"
               >
                 <ShoppingCart className="w-5 h-5 mr-2" />
                 {toy.inStock ? 'Add to Cart' : 'Out of Stock'}
@@ -226,9 +228,9 @@ const ProductDetails = () => {
 
             {/* Product Features */}
             <Card>
-              <CardContent className="p-6">
-                <h3 className="text-lg font-semibold text-foreground mb-4">Product Features</h3>
-                <div className="grid grid-cols-2 gap-4 text-sm">
+              <CardContent className="p-4 sm:p-6">
+                <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4">Product Features</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
                   <div>
                     <span className="text-muted-foreground">Category:</span>
                     <p className="font-medium">{toy.category}</p>

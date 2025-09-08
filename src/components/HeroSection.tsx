@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
  */
 const HeroSection = () => {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10">
+    <section data-hero-section className="relative overflow-hidden bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10">
       <div className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Content */}

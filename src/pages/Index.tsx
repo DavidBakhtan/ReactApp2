@@ -23,10 +23,27 @@ const Index = () => {
   const [maxPrice, setMaxPrice] = useState(1000);
   const [cartItems, setCartItems] = useState<(Toy & { quantity: number })[]>([]);
   const [showAdmin, setShowAdmin] = useState(false);
-
+  const [isFilterSticky, setIsFilterSticky] = useState(false);
   const { toast } = useToast();
 
-  // Fetch toys data using useEffect
+  // Handle sticky filter bar behavior
+  useEffect(() => {
+    const handleScroll = () => {
+      const heroSection = document.querySelector('[data-hero-section]');
+      const header = document.querySelector('header');
+      if (heroSection && header) {
+        const heroBottom = heroSection.getBoundingClientRect().bottom;
+        setIsFilterSticky(heroBottom <= 64); // 64px is header height
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+     window.addEventListener('resize', handleScroll); // Also check on resize
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+    };
+  }, []);
   useEffect(() => {
     const fetchToys = async () => {
       try {
@@ -58,7 +75,7 @@ const Index = () => {
       const matchesSearch = toy.name.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesCategory = selectedCategory === "All" || toy.category === selectedCategory;
       const matchesPrice = toy.price >= minPrice && toy.price <= maxPrice;
-      
+
       return matchesSearch && matchesCategory && matchesPrice;
     });
   }, [toys, searchTerm, selectedCategory, minPrice, maxPrice]);
@@ -154,10 +171,10 @@ const Index = () => {
       <HeroSection />
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Filter Sidebar */}
-          <div className="lg:col-span-1">
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-6">
+          {/* Filter Sidebar - Hidden on mobile, show in drawer */}
+          <div className="hidden lg:block lg:col-span-1">
             <FilterSidebar
               selectedCategory={selectedCategory}
               onCategoryChange={setSelectedCategory}
@@ -171,27 +188,64 @@ const Index = () => {
 
           {/* Product Grid */}
           <div className="lg:col-span-3">
-            {/* Results Header */}
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold">
-                {searchTerm ? `Search Results for "${searchTerm}"` : 'All Toys'}
-                <span className="text-muted-foreground text-lg ml-2">
+            {/* Mobile Filter Bar */}
+            <div className={`lg:hidden transition-all duration-300 z-30 bg-background/95 backdrop-blur-sm border-b border-border ${isFilterSticky
+                ? 'fixed left-0 right-0' 
+                : 'relative'
+               }`}
+            style={{
+              top: isFilterSticky ? `${document.querySelector('header')?.offsetHeight || 64}px` : 'auto'
+            }}>
+              <div className="container mx-auto px-2 py-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex-1">
+                    <h2 className="text-base font-semibold">
+                      {searchTerm ? `"${searchTerm}"` : 'All Toys'}
+                    </h2>
+                    <span className="text-muted-foreground text-sm">
+                      {filteredToys.length} products
+                    </span>
+                  </div>
+
+                  <FilterSidebar
+                    selectedCategory={selectedCategory}
+                    onCategoryChange={setSelectedCategory}
+                    minPrice={minPrice}
+                    maxPrice={maxPrice}
+                    onMinPriceChange={setMinPrice}
+                    onMaxPriceChange={setMaxPrice}
+                    onResetFilters={handleResetFilters}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Spacer for sticky bar */}
+            {isFilterSticky && <div className="lg:hidden mb-4" style={{ height: `${document.querySelector('header')?.offsetHeight || 64}px` }}></div>}
+
+            {/* Desktop Filter Header */}
+            <div className="hidden lg:flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-bold">
+                  {searchTerm ? `Results for "${searchTerm}"` : 'All Toys'}
+                </h2>
+                <span className="text-muted-foreground text-lg">
                   ({filteredToys.length} products)
                 </span>
-              </h2>
+              </div>
             </div>
 
             {/* Product Grid */}
             {loading ? (
-              <div className="text-center py-12">
-                <div className="text-6xl mb-4 animate-bounce">🎮</div>
-                <h3 className="text-xl font-semibold mb-2">Loading Toys...</h3>
-                <p className="text-muted-foreground">
+              <div className="text-center py-8 sm:py-12">
+                <div className="text-4xl sm:text-6xl mb-4 animate-bounce">🎮</div>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">Loading Toys...</h3>
+                <p className="text-muted-foreground text-sm sm:text-base">
                   Fetching amazing toys from our API
                 </p>
               </div>
             ) : filteredToys.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
                 {filteredToys.map((toy) => (
                   <ProductCard
                     key={toy.id}
@@ -201,10 +255,10 @@ const Index = () => {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <div className="text-6xl mb-4">🔍</div>
-                <h3 className="text-xl font-semibold mb-2">No toys found</h3>
-                <p className="text-muted-foreground">
+              <div className="text-center py-8 sm:py-12">
+                <div className="text-4xl sm:text-6xl mb-4">🔍</div>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">No toys found</h3>
+                <p className="text-muted-foreground text-sm sm:text-base">
                   Try adjusting your search or filters
                 </p>
               </div>

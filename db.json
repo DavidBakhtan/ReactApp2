@@ -1,18 +1,6 @@
 {
   "toys": [
     {
-      "id": "3",
-      "name": "Learning Alphabet Blocks",
-      "price": 19.99,
-      "originalPrice": 29.99,
-      "discount": 33,
-      "category": "Educational",
-      "image": "https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?w=400&h=400&fit=crop&crop=center",
-      "description": "Colorful alphabet blocks for early learning",
-      "inStock": true,
-      "rating": 4.9
-    },
-    {
       "id": "6",
       "name": "Teddy Bear Plush",
       "price": 15.99,
