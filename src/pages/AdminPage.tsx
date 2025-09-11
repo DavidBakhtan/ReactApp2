@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Plus, Edit, Trash2, Save, X } from "lucide-react";
+import { ArrowLeft, Plus, Edit, Trash2, Save, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,6 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Toy, toyCategories, ToyApiService } from "@/services/toyApi";
+import FilterSidebar from "@/components/FilterSidebar";
+
 
 interface AdminPageProps {
   toys: Toy[];
@@ -24,6 +26,10 @@ const AdminPage = ({ toys, onUpdateToys, onBackClick }: AdminPageProps) => {
   const [editingToy, setEditingToy] = useState<Toy | null>(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [formData, setFormData] = useState<Partial<Toy>>({});
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(1000);
   const { toast } = useToast();
 
   const handleSave = async () => {
@@ -129,6 +135,22 @@ const AdminPage = ({ toys, onUpdateToys, onBackClick }: AdminPageProps) => {
     setIsAddingNew(false);
     setFormData({});
   };
+const handleResetFilters = () => {
+    setSearchQuery("");
+    setSelectedCategory("All");
+    setMinPrice(0);
+    setMaxPrice(1000);
+  };
+
+  // Filter toys based on search and filters
+  const filteredToys = toys.filter((toy) => {
+    const matchesSearch = toy.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         toy.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === "All" || toy.category === selectedCategory;
+    const matchesPrice = toy.price >= minPrice && toy.price <= maxPrice;
+    
+    return matchesSearch && matchesCategory && matchesPrice;
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -156,9 +178,37 @@ const AdminPage = ({ toys, onUpdateToys, onBackClick }: AdminPageProps) => {
       </div>
 
       <div className="container mx-auto px-4 py-6">
+        {/* Search and Filter Section */}
+        <div className="mb-6 space-y-4">
+          {/* Search Bar */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10 h-12"
+            />
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Product Form */}
+          {/* Filter Sidebar */}
           <div className="lg:col-span-1">
+            <FilterSidebar
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+              minPrice={minPrice}
+              maxPrice={maxPrice}
+              onMinPriceChange={setMinPrice}
+              onMaxPriceChange={setMaxPrice}
+              onResetFilters={handleResetFilters}
+            />
+          </div>
+
+          {/* Product Form and List */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Product Form */}
             {(isAddingNew || editingToy) && (
               <Card className="sticky top-4">
                 <CardHeader>
@@ -253,19 +303,31 @@ const AdminPage = ({ toys, onUpdateToys, onBackClick }: AdminPageProps) => {
                 </CardContent>
               </Card>
             )}
-          </div>
-
-          {/* Product List */}
-          <div className="lg:col-span-2">
+          
+            {/* Product List */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl font-semibold">
-                  Product Inventory ({toys.length} items)
+                  Product Inventory ({filteredToys.length} of {toys.length} items)
                 </h2>
               </div>
 
               <div className="grid gap-4">
-                {toys.map((toy) => (
+                {filteredToys.length === 0 ? (
+                  <Card>
+                    <CardContent className="p-8 text-center">
+                      <p className="text-muted-foreground">No products found matching your criteria</p>
+                      <Button 
+                        variant="outline" 
+                        onClick={handleResetFilters}
+                        className="mt-4"
+                      >
+                        Reset Filters
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  filteredToys.map((toy) => (
                   <Card key={toy.id} className={editingToy?.id === toy.id ? "ring-2 ring-primary" : ""}>
                     <CardContent className="p-4">
                       <div className="flex gap-4">
@@ -316,7 +378,8 @@ const AdminPage = ({ toys, onUpdateToys, onBackClick }: AdminPageProps) => {
                       </div>
                     </CardContent>
                   </Card>
-                ))}
+           ))
+                )}
               </div>
             </div>
           </div>
